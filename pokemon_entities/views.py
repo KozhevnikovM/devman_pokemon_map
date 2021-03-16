@@ -4,6 +4,8 @@ import json
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 
+from .models import Pockemon
+
 
 MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = "https://vignette.wikia.nocookie.net/pokemon/images/6/6e/%21.png/revision/latest/fixed-aspect-ratio-down/width/240/height/240?cb=20130525215832&fill=transparent"
@@ -32,12 +34,14 @@ def show_all_pokemons(request):
                 folium_map, pokemon_entity['lat'], pokemon_entity['lon'], pokemon['img_url'])
 
     pokemons_on_page = []
-    for pokemon in pokemons:
+    for pokemon in Pockemon.objects.all():
+        image = pokemon.image.url if pokemon.image else None
         pokemons_on_page.append({
-            'pokemon_id': pokemon['pokemon_id'],
-            'img_url': pokemon['img_url'],
-            'title_ru': pokemon['title_ru'],
+            'pokemon_id': pokemon.id,
+            'img_url': image,
+            'title_ru': pokemon.title,
         })
+    pockemons = Pockemon.objects.all()
 
     return render(request, "mainpage.html", context={
         'map': folium_map._repr_html_(),
