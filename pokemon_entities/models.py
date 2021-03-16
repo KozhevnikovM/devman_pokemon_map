@@ -11,7 +11,7 @@ class Pokemon(models.Model):
 class PokemonEntity(models.Model):
     lat = models.FloatField()
     lon = models.FloatField()
-    pockemon = models.ForeignKey(Pokemon, on_delete=models.SET_NULL, null=True)
+    pokemon = models.ForeignKey(Pokemon, on_delete=models.SET_NULL, null=True)
     appeared_at = models.DateTimeField(blank=True, null=True)
     disappeared_at = models.DateTimeField(blank=True, null=True)
     level = models.IntegerField(null=True, blank=True)
