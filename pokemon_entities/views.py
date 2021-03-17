@@ -27,15 +27,17 @@ def show_all_pokemons(request):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
     for pokemon_entity in PokemonEntity.objects.all():
+        current_pokemon = pokemon_entity.pokemon
+        image = current_pokemon.image.url if current_pokemon.image else DEFAULT_IMAGE_URL
         add_pokemon(
             folium_map, pokemon_entity.lat, pokemon_entity.lon, request.build_absolute_uri(
-                pokemon_entity.pokemon.image.url
+                image
             ))
 
     pokemons_on_page = []
 
     for pokemon in Pokemon.objects.all():
-        image = pokemon.image.url if pokemon.image else None
+        image = pokemon.image.url if pokemon.image else DEFAULT_IMAGE_URL
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
             'img_url': image,
@@ -43,6 +45,7 @@ def show_all_pokemons(request):
         })
     
     pockemons = Pokemon.objects.all()
+    
 
     return render(request, "mainpage.html", context={
         'map': folium_map._repr_html_(),
@@ -51,18 +54,39 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemon_object = Pokemon.objects.get(id=pokemon_id)
+    raw_pokemon = Pokemon.objects.get(id=pokemon_id)
+    evalution = raw_pokemon.evalution.all()
+    print(evalution.first())
+    progenitor = {} if not raw_pokemon.progenitor else {
+        'title_ru': raw_pokemon.progenitor.title,
+        'pokemon_id': raw_pokemon.progenitor.id,
+        'img_url': request.build_absolute_uri(
+            raw_pokemon.progenitor.image.url
+        )
+    }
+    descendent = {} if not evalution.first() else {
+        'title_ru': evalution.first().title,
+        'pokemon_id': evalution.first().id,
+        'img_url': request.build_absolute_uri(
+            evalution.first().image.url
+        )
+    }
 
     pokemon = {
-        'pokemon_id': pokemon_object.id,
-        'title_ru': pokemon_object.title,
+        'pokemon_id': raw_pokemon.id,
+        'title_ru': raw_pokemon.title,
+        'title_en': raw_pokemon.en_title,
+        'title_jp': raw_pokemon.jp_title,
+        'previous_evolution': progenitor,
+        'next_evolution': descendent,
+        'description': raw_pokemon.description,
         'img_url': request.build_absolute_uri(
-                        pokemon_object.image.url
+                        raw_pokemon.image.url
                     )
     }
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in PokemonEntity.objects.filter(pokemon=pokemon_object):
+    for pokemon_entity in PokemonEntity.objects.filter(pokemon=raw_pokemon):
         add_pokemon(
             folium_map, pokemon_entity.lat, pokemon_entity.lon, request.build_absolute_uri(
                 pokemon_entity.pokemon.image.url
