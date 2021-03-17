@@ -24,11 +24,23 @@
 pip install -r requirements.txt
 ```
 
+Запустите миграции базы данных:
+```sh
+python3 manage.py migrate
+```
+
+Создайте пользователя
+```sh
+python3 manage.py createsuperuser
+```
+
 Запустите разработческий сервер
 
 ```sh
 python3 manage.py runserver
 ```
+Добавьте покемонов и их местоположения в админке: (http://127.0.0.1/admin)
+
 
 ### Переменные окружения
 
