@@ -33,7 +33,8 @@ class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(
         Pokemon,
         on_delete=models.CASCADE,
-        verbose_name='Покемон'
+        verbose_name='Покемон',
+        related_name='entities'
     )
     appeared_at = models.DateTimeField(
         blank=True,

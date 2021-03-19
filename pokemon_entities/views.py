@@ -1,6 +1,6 @@
 import folium
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Pokemon, PokemonEntity
 
@@ -65,7 +65,7 @@ def show_all_pokemons(request):
 
 def show_pokemon(request, pokemon_id):
     """Pokemon personal page"""
-    raw_pokemon = Pokemon.objects.get_object_or_404(id=pokemon_id)
+    raw_pokemon = get_object_or_404(Pokemon, id=pokemon_id)
     raw_descendent = raw_pokemon.evalution.first()
 
     progenitor = {} if not raw_pokemon.progenitor else {
@@ -92,7 +92,7 @@ def show_pokemon(request, pokemon_id):
     }
     folium_map = show_pokemons_map(
         request,
-        PokemonEntity.objects.filter(pokemon=raw_pokemon)
+        raw_pokemon.entities.all()
     )
     return render(
         request,
