@@ -65,7 +65,7 @@ def show_all_pokemons(request):
 
 def show_pokemon(request, pokemon_id):
     """Pokemon personal page"""
-    raw_pokemon = Pokemon.objects.get(id=pokemon_id)
+    raw_pokemon = Pokemon.objects.get_object_or_404(id=pokemon_id)
     raw_descendent = raw_pokemon.evalution.first()
 
     progenitor = {} if not raw_pokemon.progenitor else {
